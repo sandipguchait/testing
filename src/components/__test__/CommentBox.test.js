@@ -4,6 +4,7 @@ import CommentBox from '../CommentBox';
 
 
 let wrapped;
+
 beforeEach(() => {
      wrapped = mount(<CommentBox/>);
 });
@@ -17,20 +18,25 @@ it('has a text area and a button', () => {
     expect(wrapped.find('button').length).toEqual(1);
 });
 
-it('has a textarea that users can type in', () => {
-    wrapped.find('textarea').simulate('change', {
-        target: { value: 'new comment'}
+// TEXT area Grouping 
+describe('the text area', () => {
+     // ONLY WILL RUN BEFORE THESE 2 Block of IT and not outside
+    beforeEach(() => {
+        wrapped.find('textarea').simulate('change', {
+            target: { value: 'new comment'}
+        });
+        wrapped.update();
     });
-    wrapped.update();
-    expect(wrapped.find('textarea').prop('value')).toEqual('new comment')
+
+  
+    it('has a textarea that users can type in', () => {
+        expect(wrapped.find('textarea').prop('value')).toEqual('new comment')
+    });
+    
+    it('has textarea emptied after form gets submitted', ()=> {
+        wrapped.find('form').simulate('submit');
+        wrapped.update();
+        expect(wrapped.find('textarea').prop('value')).toEqual('')
+    });
 });
 
-it('has textarea emptied after form gets submitted', ()=> {
-    wrapped.find('textarea').simulate('change', {
-        target: { value: 'new comment'}
-    });
-    wrapped.update();
-    wrapped.find('form').simulate('submit');
-    wrapped.update();
-    expect(wrapped.find('textarea').prop('value')).toEqual('')
-})
