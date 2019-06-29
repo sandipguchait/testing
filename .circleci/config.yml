@@ -1,20 +1,33 @@
 version: 2
 jobs:
-  build1:
+  build:
     docker:
-       - image: circleci/ruby:2.4.1
+       - image: circleci/node:8.9
     steps:
        - checkout
-       - run: echo "Hello there!"
-  build2:
+       - run: echo "npm installing"
+       - run: npm install
+       - run: CI=true npm run build
+  test:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: circleci/node:8.9
     steps:
       - checkout
-      - run: echo "Good Bye"
+      - run: echo "Testing starts"
+      - run: npm install
+      - run: npm test
+  mustcompletejob:
+    docker:
+      - image: circleci/node:8.9
+    steps:
+      - checkout
+      - run: echo "This must complete then test job will run"
 workflows:
   version: 2
-  CircleciTesting:
+  build_test:
     jobs:
-      - build1
-      - build2
+      - build
+      - mustcompletejob
+      - test:
+          requires:
+            - mustcompletejob
